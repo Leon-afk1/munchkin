@@ -55,30 +55,14 @@ public class Paquet {
         Equipement calculetteNspire = new Equipement("Calculette Nspire", 6, "1 main", "", 100);// effet : détruit le monstre PMA
 
         // Ajout des nouveaux équipements au paquet de cartes Tresors
-        ajouterCarteTresor(jogginsGris);
-        ajouterCarteTresor(chaussureDeSport);
-        ajouterCarteTresor(packDeBiere);
-        ajouterCarteTresor(ordiSurpuissant);
-        ajouterCarteTresor(pinsBlousard);
-        ajouterCarteTresor(chaussettesMcdo);
-        ajouterCarteTresor(casquette);
-        ajouterCarteTresor(cafeNoisette);
-        ajouterCarteTresor(cafeAllonge);
-        ajouterCarteTresor(cafeCreme);
-        ajouterCarteTresor(cheveuxGras);
-        ajouterCarteTresor(batonDeLaSagesse);
-        ajouterCarteTresor(outfitTrendy);
-        ajouterCarteTresor(batonMauvaiseFoi);
-        ajouterCarteTresor(crayonsDeCouleur);
-        ajouterCarteTresor(carteUTBM);
-        ajouterCarteTresor(calculetteNspire);
+        for (Equipement equipement : Arrays.asList( chaussureDeSport, packDeBiere, ordiSurpuissant, chaussettesMcdo, casquette, cafeNoisette, cafeAllonge, cheveuxGras, batonDeLaSagesse, outfitTrendy, batonMauvaiseFoi, crayonsDeCouleur)) {
+            ajouterCartePorte(equipement);
+        }
 
         //Ajoute de certains équipements au paquet de cartes Porte
-        ajouterCartePorte(jogginsGris);
-        ajouterCartePorte(calculetteNspire);
-        ajouterCartePorte(carteUTBM);
-        ajouterCartePorte(cafeCreme);
-        ajouterCartePorte(pinsBlousard);
+        for (Equipement equipement  : Arrays.asList(jogginsGris, calculetteNspire, carteUTBM, cafeCreme, pinsBlousard)) {
+            ajouterCarteTresor(equipement);
+        }
 
         // Ajout des nouvelles races
         Race informatique = new Race("Informatique", "Puanteur : niveau doublé en affrontant des monstres seul");

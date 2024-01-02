@@ -41,7 +41,7 @@ public class Joueur {
             return;
         }
 
-        System.out.println("Le joueur affronte un monstre : " + monstre.getNom());
+        System.out.println("Le joueur affronte le monstre : " + monstre.getNom());
 
         int niveauMonstre = monstre.getNiveau();
 
@@ -59,7 +59,7 @@ public class Joueur {
 
     private void demanderAideOuBoostSorts(Monstre monstre, int bonusJoueur) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Le joueur a besoin d'aide ou de jouer des sorts pour augmenter ses bonus.");
+        System.out.println(getNom()+" a besoin d'aide ou de jouer des sorts pour augmenter ses bonus.");
 
         // Le joueur peut demander de l'aide à un autre joueur
         // (vous pouvez ajouter ici la logique pour demander de l'aide à d'autres joueurs)
