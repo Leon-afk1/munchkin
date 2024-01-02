@@ -7,6 +7,8 @@ public class MunchkinGame {
         // Création d'un nouveau tour avec le nombre de joueurs
         Tour tour = new Tour(nbJoueurs);
 
+        CarteGUI carteGUI = new CarteGUI();
+        carteGUI.setVisible(true);
         // Commencer le tour
         tour.tour();
     }
