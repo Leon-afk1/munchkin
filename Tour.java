@@ -4,27 +4,44 @@ public class Tour {
     private List<Joueur> joueurs;
     private Paquet paquet;
 
+    public  Paquet getPaquet(){
+        return paquet;
+    }
+
     public Tour(int nbJoueurs) {
         paquet = new Paquet();
         paquet.creerCartes();
         paquet.melanger();
         joueurs = new ArrayList<>();
+        System.out.println("Création de "+nbJoueurs+" joueurs.");
         demanderNomsJoueurs(nbJoueurs);
         for (Joueur joueur : joueurs) {
             for (int i = 0; i < 4; i++) {
-                joueur.piocherCarte(paquet.tirerCarteAleatoire("PORTE"));
-                joueur.piocherCarte(paquet.tirerCarteAleatoire("TRESORS"));
+                joueur.piocherCarte(paquet.tirerCarteAleatoire("PORTE"),false);
+                joueur.piocherCarte(paquet.tirerCarteAleatoire("TRESORS"),false);
             }
+            joueur.setJoueurs(joueurs);
+            System.out.println("-----------------------------------------------");
+
+            System.out.println("\nLe joueur " + joueur.getNom() + " a pioché 4 cartes porte et 4 cartes trésors.\nIl peut les jouer ou les garder dans sa main.");
+            joueur.afficherJoueur();
+            System.out.println("-----------------------------------------------");
+
+            // Le joueur peut choisir de jouer une carte de sa main.
+            int choix=0;
+            do {
+                choix = joueur.jouerCarte();
+                System.out.println("-----------------------------------------------");
+            } while (choix != 0);
         }
     }
 
     private void demanderNomsJoueurs(int nbJoueurs) {
         Scanner scanner = new Scanner(System.in);
-
         for (int i = 0; i < nbJoueurs; i++) {
-            System.out.print("Nom du joueur " + (i + 1) + ": ");
-            String nomJoueur = scanner.nextLine();
-            joueurs.add(new Joueur(nomJoueur));
+            System.out.print("Entrez le nom du joueur " + (i + 1) + " : ");
+            String nom = scanner.nextLine();
+            joueurs.add(new Joueur(nom,paquet));
         }
     }
 
@@ -54,14 +71,22 @@ public class Tour {
             if (cartePorte instanceof Monstre) {
                 // Si c'est un monstre, le joueur doit l'affronter
                 Monstre monstre = (Monstre) cartePorte;
-                joueur.affronterMonstre(monstre,joueur.calculerBonusTotal());
-            } else if (cartePorte instanceof Sort) {
-                // Si c'est un sort, le joueur doit le jouer
-                Sort sort = (Sort) cartePorte;
-                joueur.jouerSort(sort);
-            } else {
-                // Sinon, la carte va dans la main du joueur
-                joueur.piocherCarte(cartePorte);
+                joueur.affronterMonstre(monstre,joueur.calculerBonusTotal(),"");
+            } else{
+
+                if (cartePorte instanceof Sort) {
+                    // Si c'est un sort, le joueur doit le jouer
+                    Sort sort = (Sort) cartePorte;
+                    if (sort.getType() == 0) {
+                        // Si c'est un sort qui s'applique au joueur, il est joué directement
+                        joueur.jouerSortContreJoueur(sort, joueur);
+                    }else {
+                        joueur.piocherCarte(sort, true);
+                    }
+                } else {
+                    // Sinon, la carte va dans la main du joueur
+                    joueur.piocherCarte(cartePorte, true);
+                }
                 System.out.println("Le joueur n'a pas affronté de monstre pendant ce tour.");
 
                 // Le joueur peut choisir de jouer un monstre de sa main et le combattre
@@ -116,22 +141,26 @@ public class Tour {
 
     private void distribuerCartesEnTrop(Joueur player) {
         // Trouver le joueur le plus bas niveau
-        Joueur joueurPlusBasNiveau = trouverJoueurPlusBasNiveau(player);
+        List<Joueur> joueursPlusBasNiveau = trouverJoueurPlusBasNiveau(player);
 
-        player.gererNombreCartesMain(joueurPlusBasNiveau);
+        player.gererNombreCartesMain(joueursPlusBasNiveau);
     }
 
-    private Joueur trouverJoueurPlusBasNiveau(Joueur joueurcourant) {
-        Joueur joueurPlusBasNiveau = joueurs.get(0);
-        if (joueurPlusBasNiveau== joueurcourant) {
-            joueurPlusBasNiveau = joueurs.get(1);
-        }
-        for (Joueur joueur : joueurs) {
-            if (joueur.getNiveau() < joueurPlusBasNiveau.getNiveau() && joueur != joueurcourant) {
-                joueurPlusBasNiveau = joueur;
+    private List<Joueur> trouverJoueurPlusBasNiveau(Joueur joueurcourant) {
+        List<Joueur> joueursSansJoueurCourant = new ArrayList<>(this.joueurs);
+        joueursSansJoueurCourant.remove(joueurcourant);
+        List<Joueur> joueurPlusBasNiveau = new ArrayList<>();
+        int niveauPlusBas = 10;
+        for (Joueur joueur : joueursSansJoueurCourant) {
+            if (joueur.getNiveau() < niveauPlusBas) {
+                niveauPlusBas = joueur.getNiveau();
+                joueurPlusBasNiveau.clear();
+                joueurPlusBasNiveau.add(joueur);
+            } else if (joueur.getNiveau() == niveauPlusBas) {
+                joueurPlusBasNiveau.add(joueur);
             }
         }
-        return joueurPlusBasNiveau;
+        return joueurPlusBasNiveau;        
     }
 
     private int demanderChoixJoueur(Joueur joueur) {
@@ -150,7 +179,7 @@ public class Tour {
                 }
             } else if (choix == 2) {
                 // Piocher une autre carte porte qui va dans la main du joueur
-                joueur.piocherCarte(paquet.tirerCarteAleatoire("PORTE"));
+                joueur.piocherCarte(paquet.tirerCarteAleatoire("PORTE"), true);
             }
             return choix;
         } catch (InputMismatchException e) {
