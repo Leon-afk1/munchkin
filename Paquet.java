@@ -124,7 +124,7 @@ public class Paquet {
         }
 
         //Ajoute de certains équipements au paquet de cartes Porte
-        for (Equipement equipement  : Arrays.asList(jogginsGris, calculetteNspire, carteUTBM, cafeCreme, pinsBlousard,
+        for (Equipement equipement  : Arrays.asList(jogginsGris, calculetteNspire, cafeCreme, pinsBlousard,
          sacDeSport, sacDeVoyage, trousse, trousseDeToilette, stylo, styloPlume, stylo4Couleurs, abonnementAChatGPT4, abonnementAChatGPT3, roller, skate, 
          trottinette, velo, voiture, batterieExterne, batterieExterneDeLaBatterieExerne, moteur, feuillesDeCours, feuilleBlanche, feuilleDeBrouillon, regle, cableEthernet, cableLong, cableCourt, bourseMensuelle, bourseAnnuelle, 
          bourseDeStage, salaire, salaireDeStage, tempslibre, calculetteCollege, calculetteLycee)) {

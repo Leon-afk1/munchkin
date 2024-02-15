@@ -148,7 +148,7 @@ public class Joueur {
             return;
         }
 
-        System.out.println("Le joueur affronte un monstre : " + monstre.getNom());
+        System.out.println("Le joueur " + getNom() +" affronte un monstre : " + monstre.getNom());
 
         if (monstre.getEffet()=="+5 contre la branche info"){
             if (getClass().getName()=="Informatique"){
@@ -191,12 +191,9 @@ public class Joueur {
 
         // Vérifier si le joueur peut gagner le combat sans l'aide des autres joueurs
         if (bonusJoueur >= niveauMonstre) {
-            System.out.println("Le joueur gagne le combat si rien ne change.");
+            System.out.println("Le joueur " + getNom() +" gagne le combat si rien ne change.");
             for (Joueur joueur : joueurs) {
                 System.out.println("Le joueur "+joueur.getNom()+" veut-il contrer le joueur ?");
-
-                // Ajout de l'option "Ne rien faire"
-                System.out.println("0. Ne rien faire");
 
                 System.out.println("1. Oui");
                 System.out.println("2. Non");
@@ -250,7 +247,7 @@ public class Joueur {
                     }
                 }
             }else{
-                System.out.println("Le joueur pioche " + monstre.getCarteVaincue() + " cartes.");
+                System.out.println("Le joueur " + getNom() +" pioche " + monstre.getCarteVaincue() + " cartes.");
                 for (int i = 0; i < monstre.getCarteVaincue(); i++) {
                     piocherCarte(paquet.tirerCarteAleatoire("TRESORS"),true);
                 }
@@ -312,6 +309,7 @@ public class Joueur {
         if (sortsDansMainJouable.isEmpty()) {
             System.out.println("Le joueur ne peut pas jouer de sorts.");
             System.out.println("Le joueur ne peut pas aider le monstre.");
+            affronterMonstre(monstre, calculerBonusTotal(), "");
             return;
         }
 
@@ -327,6 +325,7 @@ public class Joueur {
             int choix = scanner.nextInt();
             if (choix == 0) {
                 System.out.println("Le joueur ne joue rien.");
+                affronterMonstre(monstre, calculerBonusTotal(), "");
                 return;
             }
             if (choix > 0 && choix <= sortsDansMainJouable.size()) {
@@ -389,8 +388,15 @@ public class Joueur {
             }
         }
 
+        if (sortsDansMain.isEmpty()) {
+            System.out.println("Le joueur ne peut pas jouer de sorts.");
+            System.out.println("Le joueur ne peut pas aider le monstre.");
+            affronterMonstre(monstre, bonusJoueur,"");
+            return;
+        }
         for (int i = 0; i < sortsDansMain.size(); i++) {
-            System.out.println((i + 1) + ". " + sortsDansMain.get(i).getNom());
+            String templateSort = (i+1) + ". " +"%-40s Bonus: %-10d Type: %-10s Effet: %-10s%n";
+            System.out.printf(templateSort, sortsDansMain.get(i).getNom(), sortsDansMain.get(i).getBonus(), "", sortsDansMain.get(i).getEffet());
         }
 
         // Choix des sorts à jouer
@@ -502,6 +508,12 @@ public class Joueur {
             case "double le monstre":
                 monstre.gainNiveau(monstre.getNiveau());
                 break;
+            case "Gain de 1 niveau":
+                gainNiveau(1);
+                System.out.println("Le joueur gagne 1 niveau");
+                System.out.println("Le joueur est maintenant niveau "+getNiveau());
+                break;
+            
 
 
             default:
@@ -601,25 +613,26 @@ public class Joueur {
 
             return 0;
         } else {
+
             while (true) {
                 System.out.println("Choisissez une carte de votre main à jouer :");
                 System.out.println("0. Ne rien jouer");
     
                 for (tailleSort = 0; tailleSort < peutJouerSort.size(); tailleSort++) {
-                    System.out.println((tailleSort + 1) + ". " + peutJouerSort.get(tailleSort).getNom() + ", Effet : " + peutJouerSort.get(tailleSort).getEffet());
+                    String templateSort = (tailleSort + 1) + ". " +"%-40s Bonus: %-10d Type: %-10s Effet: %-10s%n";
+                    System.out.printf(templateSort, peutJouerSort.get(tailleSort).getNom(), peutJouerSort.get(tailleSort).getBonus(), "", peutJouerSort.get(tailleSort).getEffet());
                 }
     
                 for (tailleEquipement = 0; tailleEquipement < peutJouerEquipement.size(); tailleEquipement++) {
-                    System.out.print((tailleEquipement + 1 + tailleSort) + ". " + peutJouerEquipement.get(tailleEquipement).getNom() + ", Type : " + peutJouerEquipement.get(tailleEquipement).getType() + ", Bonus : " + peutJouerEquipement.get(tailleEquipement).getBonus());
-                    if (!peutJouerEquipement.get(tailleEquipement).getEffet().isEmpty()) {
-                        System.out.println(", Effet : " + peutJouerEquipement.get(tailleEquipement).getEffet());
-                    }else{
-                        System.out.println("");
-                    }
+                    String templateEquipement = "%-43s Bonus: %-10d Type: %-10s Race : %-10s%n";
+
+                    System.out.printf(templateEquipement, (tailleEquipement + 1 + tailleSort) + ". " + peutJouerEquipement.get(tailleEquipement).getNom(), peutJouerEquipement.get(tailleEquipement).getBonus(), peutJouerEquipement.get(tailleEquipement).getType(), peutJouerEquipement.get(tailleEquipement).getEffet());
                 }
     
                 for (tailleRace = 0; tailleRace < peutJouerRace.size(); tailleRace++) {
-                    System.out.println((tailleRace + 1 + tailleSort + tailleEquipement) + ". " + peutJouerRace.get(tailleRace).getNom() + ", Bonus : " + peutJouerRace.get(tailleRace).getBonus());
+                    String templateRace = "%-43s Bonus: %-80s%n";
+                    System.out.printf(templateRace, (tailleRace + 1 + tailleSort + tailleEquipement) + ". " + peutJouerRace.get(tailleRace).getNom(), peutJouerRace.get(tailleRace).getBonus());
+
                 }
     
                 // Choix de la carte à jouer
@@ -961,6 +974,7 @@ public class Joueur {
         for (Equipement equipement : board) {
             equipement.afficherEquipement();
         }
+        System.out.println("----------------------------------------------------------------------------------------------");
         System.out.println("Fin du board.");
     }
 

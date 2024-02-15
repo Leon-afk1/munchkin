@@ -29,19 +29,12 @@ public class Equipement extends Carte {
     }
 
     public void afficherEquipement() {
-        System.out.println("-----------------------------------------------");
-        System.out.println("Equipement : " + getNom());
-        System.out.println("Bonus : " + getBonus());
-        if (!getType().isEmpty()) {
-            System.out.println("Type : " + getType());
-        }
-        if (!getEffet().isEmpty()) {
-            System.out.println("Effet : " + getEffet());
-        }
-        if (getPrix() != 0) {
-            System.out.println("Valeur : " + getPrix()  + "euros");
-        }
-        System.out.println("-----------------------------------------------");
+        String template = "%-43s Bonus: %-10d Type: %-10s Race: %-10s%n";
+        
+        System.out.println("----------------------------------------------------------------------------------------------");
+        
+        System.out.printf(template, getNom(), getBonus(), getType(), getEffet());
+
     }
 
 }
