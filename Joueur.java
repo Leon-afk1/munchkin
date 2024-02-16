@@ -189,6 +189,8 @@ public class Joueur {
             }
         }
 
+        
+
         // Vérifier si le joueur peut gagner le combat sans l'aide des autres joueurs
         if (bonusJoueur >= niveauMonstre) {
             System.out.println("Le joueur " + getNom() +" gagne le combat si rien ne change.");
@@ -254,40 +256,111 @@ public class Joueur {
             }
             
         } else {
-            // Le joueur a besoin d'aide ou de jouer des cartes pour augmenter ses bonus
-            Scanner scanner = new Scanner(System.in);
-            int choix=3;
-            while (choix!=0 && choix!=2 && choix!=1){
-                System.out.println("Le joueur a besoin d'aide ou de jouer des sorts pour augmenter ses bonus.");
-                System.out.println("Voulez vous demander de l'aide ou jouer des sorts ?");
+            
+            if (!Objects.equals(joueurAide, "")){
+                System.out.println("Le joueur "+joueurAide+" aide le joueur "+ getNom() +" pendant le combat, les deux joueurs peuvent jouer des sorts ou fuir");
+                for (Joueur joueur : joueurs){
+                    if (Objects.equals(joueur.getNom(), joueurAide)){
+                        Scanner scanner = new Scanner(System.in);
+                        int choix=3;
+                        while (choix!=0 && choix!=1){
+                            System.out.println("Le combat est perdu pour l'instant, les deux joueurs peuvent jouer des sorts ou fuir");
+                            System.out.println("Le joueur " + joueur.getNom() + " peut jouer des sorts pour augmenter ses bonus.");
+                            System.out.println("0. Ne rien faire");
+                            System.out.println("1. Jouer des sorts");
 
-                // Ajout de l'option "Ne rien faire"
-                System.out.println("0. Ne rien faire");
+                            try {
+                                System.out.print("Choix : ");
+                                choix = scanner.nextInt();
+                                switch (choix) {
+                                    case 0:
+                                        // Le joueur ne fait rien, le combat est perdu
+                                        System.out.println("Le joueur ne fait rien.");
+                                        break;
+                                    case 1:
+                                        // Le joueur joue des sorts
+                                        jouerSortsPendantCombat(monstre, bonusJoueur,joueurAide);
+                                        break;
+                                    default:
+                                        System.out.println("Choix invalide.");
+                                        break;
+                                }
+                            } catch (InputMismatchException e) {
+                                System.out.println("Entrée invalide.");
+                            }
+                        }
+                        Scanner scanner2 = new Scanner(System.in);
+                        int choix2=3;
+                        while (choix2!=0 && choix2!=1){
+                            System.out.println("Le joueur " + getNom() + " peut jouer des sorts pour augmenter ses bonus.");
+                            System.out.println("0. Ne rien faire");
+                            System.out.println("1. Jouer des sorts");
 
-                System.out.println("1. Demander de l'aide");
-                System.out.println("2. Jouer des sorts");
-                try {
-                    System.out.print("Choix : ");
-                    choix = scanner.nextInt();
-                    switch (choix) {
-                        case 0:
-                            // Le joueur ne fait rien, le combat est perdu
-                            perdreCombat(monstre,joueurAide);
-                            break;
-                        case 1:
-                            // Le joueur demande de l'aide
-                            demanderAide(monstre, bonusJoueur);
-                            break;
-                        case 2:
-                            // Le joueur joue des sorts
-                            jouerSortsPendantCombat(monstre, bonusJoueur,joueurAide);
-                            break;
-                        default:
-                            System.out.println("Choix invalide.");
-                            break;
+                            try {
+                                System.out.print("Choix : ");
+                                choix2 = scanner2.nextInt();
+                                switch (choix2) {
+                                    case 0:
+                                        // Le joueur ne fait rien, le combat est perdu
+                                        System.out.println("Le joueur ne fait rien.");
+                                        break;
+                                    case 1:
+                                        // Le joueur joue des sorts
+                                        jouerSortsPendantCombat(monstre, bonusJoueur,joueurAide);
+                                        break;
+                                    default:
+                                        System.out.println("Choix invalide.");
+                                        break;
+                                }
+                            } catch (InputMismatchException e) {
+                                System.out.println("Entrée invalide.");
+                            }
+                        }
+                        perdreCombat(monstre, joueurAide);
+
                     }
-                } catch (InputMismatchException e) {
-                    System.out.println("Entrée invalide.");
+                }
+            }else{
+                // Le joueur a besoin d'aide ou de jouer des cartes pour augmenter ses bonus
+                Scanner scanner = new Scanner(System.in);
+                int choix=3;
+                while (choix!=0 && choix!=2 && choix!=1){
+                    System.out.println("Le joueur a besoin d'aide ou de jouer des sorts pour augmenter ses bonus.");
+                    System.out.println("Voulez vous demander de l'aide ou jouer des sorts ?");
+
+                    // Ajout de l'option "Ne rien faire"
+                    System.out.println("0. Ne rien faire");
+
+                    System.out.println("1. Demander de l'aide");
+                    System.out.println("2. Jouer des sorts");
+                    try {
+                        System.out.print("Choix : ");
+                        choix = scanner.nextInt();
+                        switch (choix) {
+                            case 0:
+                                // Le joueur ne fait rien, le combat est perdu
+                                perdreCombat(monstre,joueurAide);
+                                break;
+                            case 1:
+                                // Le joueur demande de l'aide
+                                if (Objects.equals(joueurAide, "")){
+                                    demanderAide(monstre, bonusJoueur);
+                                }else{
+                                    System.out.println("Le joueur "+joueurAide+" a aidé le joueur pendant le combat, un seul joueur peut aider pendant le combat, les deux joueurs peuvent essayer de fuir");
+                                    choix=3;
+                                }
+                                break;
+                            case 2:
+                                // Le joueur joue des sorts
+                                jouerSortsPendantCombat(monstre, bonusJoueur,joueurAide);
+                                break;
+                            default:
+                                System.out.println("Choix invalide.");
+                                break;
+                        }
+                    } catch (InputMismatchException e) {
+                        System.out.println("Entrée invalide.");
+                    }
                 }
             }
         }
@@ -394,6 +467,7 @@ public class Joueur {
             affronterMonstre(monstre, bonusJoueur,"");
             return;
         }
+        System.out.println("Choisissez le sort à jouer\n0. Ne rien jouer");
         for (int i = 0; i < sortsDansMain.size(); i++) {
             String templateSort = (i+1) + ". " +"%-40s Bonus: %-10d Type: %-10s Effet: %-10s%n";
             System.out.printf(templateSort, sortsDansMain.get(i).getNom(), sortsDansMain.get(i).getBonus(), "", sortsDansMain.get(i).getEffet());
